@@ -108,7 +108,12 @@ class _HomePageState extends State<HomePage> {
           child: Stack(
             children: [
               Container(
-                color: Colors.blue,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('lib/images/sky.jpeg'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
                 child: AnimatedContainer(
                   alignment: Alignment(marioX, marioY),
                   duration: Duration(milliseconds: 0),
