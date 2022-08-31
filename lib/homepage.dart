@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mario_game_flutter/button.dart';
 import 'package:mario_game_flutter/jumpingMario.dart';
 import 'package:mario_game_flutter/mario.dart';
@@ -19,6 +20,9 @@ class _HomePageState extends State<HomePage> {
   String direction = "right";
   bool midRun = false;
   bool midJump = false;
+
+  var gameFont = GoogleFonts.pressStart2p(
+      textStyle: TextStyle(color: Colors.white, fontSize: 20));
 
   void preJump() {
     time = 0;
@@ -81,22 +85,74 @@ class _HomePageState extends State<HomePage> {
         body: Column(
       children: [
         Expanded(
-            flex: 4,
-            child: Container(
-              color: Colors.blue,
-              child: AnimatedContainer(
-                alignment: Alignment(marioX, marioY),
-                duration: Duration(milliseconds: 0),
-                child: midJump
-                    ? JumpingMario(
-                        direction: direction,
-                      )
-                    : MyMario(
-                        direction: direction,
-                        midRun: midRun,
-                      ),
+          flex: 4,
+          child: Stack(
+            children: [
+              Container(
+                color: Colors.blue,
+                child: AnimatedContainer(
+                  alignment: Alignment(marioX, marioY),
+                  duration: Duration(milliseconds: 0),
+                  child: midJump
+                      ? JumpingMario(
+                          direction: direction,
+                        )
+                      : MyMario(
+                          direction: direction,
+                          midRun: midRun,
+                        ),
+                ),
               ),
-            )),
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Column(
+                      children: [
+                        Text(
+                          "MARIO",
+                          style: gameFont,
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          "0000",
+                          style: gameFont,
+                        )
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Text(
+                          "WORLD",
+                          style: gameFont,
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          "1-1",
+                          style: gameFont,
+                        )
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Text(
+                          "TIME",
+                          style: gameFont,
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          "11:11",
+                          style: gameFont,
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
         Expanded(
             flex: 1,
             child: Container(
