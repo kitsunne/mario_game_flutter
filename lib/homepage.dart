@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mario_game_flutter/button.dart';
 import 'package:mario_game_flutter/jumpingMario.dart';
 import 'package:mario_game_flutter/mario.dart';
+import 'package:mario_game_flutter/mushrooms.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -12,17 +13,29 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  static double marioX = -1;
+  static double marioX = 0;
   static double marioY = 1;
+  double marioSize = 50;
+  double mushroomX = 0.5;
+  double mushroomY = 1;
   double time = 0;
   double height = 0;
   double initialHeight = marioY;
   String direction = "right";
   bool midRun = false;
   bool midJump = false;
-
   var gameFont = GoogleFonts.pressStart2p(
       textStyle: TextStyle(color: Colors.white, fontSize: 20));
+
+  void checkIfAteMushrooms() {
+    if ((marioX - mushroomX).abs() < 0.05 &&
+        (marioY - mushroomY).abs() < 0.05) {
+      setState(() {
+        mushroomX = 2;
+        marioSize = 100;
+      });
+    }
+  }
 
   void preJump() {
     time = 0;
@@ -30,31 +43,35 @@ class _HomePageState extends State<HomePage> {
   }
 
   void jump() {
-    midJump = true;
-    preJump();
-    Timer.periodic(Duration(microseconds: 50), (timer) {
-      time += 0.05;
-      height = -4.9 * time * time + 5 * time;
+    //this first if statement  disables the double jump
+    if (midJump == false) {
+      midJump = true;
+      preJump();
+      Timer.periodic(Duration(microseconds: 50), (timer) {
+        time += 0.05;
+        height = -4.9 * time * time + 5 * time;
 
-      if (initialHeight - height > 1) {
-        midJump = false;
-        setState(() {
-          marioY = 1;
-        });
-        timer.cancel();
-      } else {
-        setState(() {
-          marioY = initialHeight - height;
-        });
-      }
-    });
+        if (initialHeight - height > 1) {
+          midJump = false;
+          setState(() {
+            marioY = 1;
+          });
+          timer.cancel();
+        } else {
+          setState(() {
+            marioY = initialHeight - height;
+          });
+        }
+      });
+    }
   }
 
   void moveRight() {
     direction = "right";
-
+    checkIfAteMushrooms();
     Timer.periodic(Duration(milliseconds: 50), (timer) {
-      if (MyButton().userIsHoldingButton() == true) {
+      checkIfAteMushrooms();
+      if (MyButton().userIsHoldingButton() == true && marioX + 0.02 < 1) {
         setState(() {
           marioX += 0.02;
           midRun = !midRun;
@@ -67,8 +84,10 @@ class _HomePageState extends State<HomePage> {
 
   void moveLeft() {
     direction = "left";
+    checkIfAteMushrooms();
     Timer.periodic(Duration(milliseconds: 50), (timer) {
-      if (MyButton().userIsHoldingButton() == true) {
+      checkIfAteMushrooms();
+      if (MyButton().userIsHoldingButton() == true && (marioX - 0.02) > -1) {
         setState(() {
           marioX -= 0.02;
           midRun = !midRun;
@@ -96,12 +115,18 @@ class _HomePageState extends State<HomePage> {
                   child: midJump
                       ? JumpingMario(
                           direction: direction,
+                          size: marioSize,
                         )
                       : MyMario(
                           direction: direction,
                           midRun: midRun,
+                          size: marioSize,
                         ),
                 ),
+              ),
+              Container(
+                alignment: Alignment(mushroomX, mushroomY),
+                child: MyMushroom(),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 10.0),
@@ -116,7 +141,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         SizedBox(height: 10),
                         Text(
-                          "0000",
+                          "0001",
                           style: gameFont,
                         )
                       ],
@@ -142,7 +167,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         SizedBox(height: 10),
                         Text(
-                          "11:11",
+                          "00:11",
                           style: gameFont,
                         )
                       ],
